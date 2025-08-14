@@ -1,10 +1,9 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import GithubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 
-// authOptions tipini açıkça NextAuthOptions ile belirtiyoruz
-export const authOptions: NextAuthOptions = {
+const authOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GithubProvider({
@@ -13,13 +12,12 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   session: {
-    strategy: "database",
+    strategy: "database" as const, // ← burada
   },
   pages: {
     signIn: "/auth/signin",
   },
 };
 
-// App Router’da NextAuth handler’ı bu şekilde export edilmeli
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
